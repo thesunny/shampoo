@@ -1,6 +1,6 @@
 {
   "name": "grunt-browserify-plus",
-  "description": "The ultimate browserify task. Watches files for changes. Uses a cache for super speed (instant builds). CoffeeScript supported out of box. Alias mappings. Shimming. Everything in one easy to use package.",
+  "description": "The ultimate Grunt Browserify task. Watches files for changes. Uses a cache for super speed (instant builds). CoffeeScript supported out of box. Alias mappings. Shimming. Everything in one easy to use package.",
   "version": "0.1.0",
   "homepage": "https://github.com/thesunny/grunt-browserify-plus",
   "author": {

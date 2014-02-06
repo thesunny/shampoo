@@ -1,15 +1,14 @@
 # grunt-browserify-plus
 
-> Continuously Browserify JavaScript and CoffeeScript files fast (it caches) and everything you need built in.
+The ultimate Grunt Browserify task.
 
-Grunt Browserify Plus was created to be the ultimate grunt task for running browserify. Quit spending time trying to configure browserify. Just get running with features and speed.
+  * Watches files for changes.
+  * Uses a cache for super speed (instant builds)
+  * CoffeeScript support out of box
+  * Alias mappings
+  * Shimming
+  * All this and more (see options) in one easy to use package.
 
-  * Automatic Rebuilds. It builds every time a require'd file changes. No special setup required to do this (with watchify)
-  * Fast! It caches so builds happen instantly. Usually unperceptible milliseconds (with watchify)
-  * CoffeeScript support built in all the way through. No finicky setup to get Browserify modules working with CoffeeScript (with  coffeeify)
-  * Alias Mappings built in (with aliasify).
-  * Shim support built in. Easily include or reference any library, even if it isn't properly set up to use CommonJS (with browserify-shim)
-  * Inline external files into your JavaScript (with brfs)
 
 
 ## Getting Started
@@ -28,10 +27,21 @@ grunt.loadNpmTasks('grunt-browserify-plus');
 ```
 
 
-## The "browserify_plus" task
+## The "browserify_plus" Grunt Plugin
 
 ### Overview
 In your project's Gruntfile, add a section named `browserify_plus` to the data object passed into `grunt.initConfig()`.
+
+Include a `files` Object where:
+
+  * The keys are the destination file for the Browserify build (remember to include the ".js")
+  * The value is either a `String` or `Array` of `String` that represents the source files. The source files may be either `.js` or `.coffee` files. Remember to:
+    1. Include the extension (.js or .coffee).
+    1. Include the "./" part of the path
+
+The source files are relative to the directory from where `grunt` is being run.
+
+Optionally include an `options` Object. See the Options section for more info.
 
 ```js
 grunt.initConfig({
@@ -45,35 +55,66 @@ grunt.initConfig({
   },
 });
 ```
-Works with CoffeeScript files:
+
+Run the grunt task from the command line using:
+
+```
+grunt browserify_plus
+```
+
+
+#### CoffeeScript
+
+As mentioned, it works with CoffeeScript files (no configuration required):
 
 ```js
 grunt.initConfig({
   browserify_plus: {
-    options: {
-      // Options go here. See below for options.
-    },
+    options: {},
     files: {
       'build/path/example.js': './source/path.coffee'
+                                // .coffee files work
     },
   },
 });
 ```
+
+
+#### Multiple Source Files
 
 For multiple files, pass in an array (feel free to mix js and coffee files):
 
 ```js
 grunt.initConfig({
   browserify_plus: {
-    options: {
-      // Options go here. See below for options.
-    },
+    options: {},
     files: {
       'build/path/example.js': ['./source/path.coffee', './source/path_2.js']
+                               // Array of String for sources works
     },
   },
 });
 ```
+
+
+#### Multiple Browserify Bundles
+
+You can have multiple builds going on simultaneously as well:
+
+```js
+grunt.initConfig({
+  browserify_plus: {
+    options: {
+    },
+    files: {
+      'build/path/example.js': ['./source/path.coffee', './source/path_2.js']
+      'build/path/example-2.js': './source/example-2.js'
+      // Multiple key/value pairs works to create multiple Browserify bundles
+    },
+  },
+});
+```
+
 
 
 
