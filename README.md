@@ -132,6 +132,33 @@ grunt.initConfig({
 
 ### Options
 
+All options:
+
+```js
+grunt.initConfig({
+  browserify_plus: {
+    options: {
+      watch: true, // watch files for changes. caches so it's super fast.
+      alias: {
+        'underscore': './lib/underscore.js'
+      },
+      shim: {
+        'jquery': {
+          exports: '$',
+          path: './lib/jquery.js',
+        }
+      },
+      sourceMaps: true,     // enable source maps
+    }
+    },
+    files: {
+      ...
+    },
+  },
+});
+```
+
+
 #### options.alias
 Type: `Object`
 Default value: `null`

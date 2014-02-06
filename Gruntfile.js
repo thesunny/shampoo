@@ -47,7 +47,7 @@ module.exports = function(grunt) {
             }
           },
           brfs: true,
-          debug: true
+          watch: true
         },
         files: {
           './tmp/example.js': ['./example/example-1.coffee', './example/example-2.js']

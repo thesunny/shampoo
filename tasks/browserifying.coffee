@@ -8,7 +8,6 @@
 
 fs = require 'fs'
 path = require 'path'
-watchifyModule = require 'watchify'
 coffeeify = require 'coffeeify'
 _ = require 'lodash'
 
@@ -29,6 +28,7 @@ module.exports = (grunt) ->
 
     # get options with defaults
     options = @options(
+      watch: false
       debug: false
       brfs: false
       aliasMappings: null
@@ -39,14 +39,22 @@ module.exports = (grunt) ->
       sourcePaths = file.orig.src
       destPath = file.orig.dest
 
-      watchifyOptions = {
+      browserifyOptions = {
         extensions: [".coffee"]
       }
 
-      # Create a watchify instance that accepts both .js and .coffee files.
-      # Watchify returns a Browserify instance except that it caches making
-      # Browserify run a lot faster after the first bundle.
-      watchify = watchifyModule(watchifyOptions)
+      # Create a browserify instance that accepts both .js and .coffee files.
+      # Note that Watchify returns a Browserify instance except that it caches
+      # making Browserify run a lot faster after the first bundle.
+      if options.watch
+        watchify = (require 'watchify')(browserifyOptions)
+      else
+        watchify = (require 'browserify')(browserifyOptions)
+
+      # # Create a watchify instance that accepts both .js and .coffee files.
+      # # Watchify returns a Browserify instance except that it caches making
+      # # Browserify run a lot faster after the first bundle.
+      # watchify = watchifyModule(watchifyOptions)
 
       # Add all the source paths the .files configuration.
       _.each sourcePaths, (sourcePath) ->
@@ -73,34 +81,46 @@ module.exports = (grunt) ->
       if options.brfs
         watchify.transform('brfs')
 
+      bundleOptions = {
+        # The default is to include the source maps
+        debug: options.sourceMaps || true
+        # These are actually the default values but added here for clarity
+        insertGlobals: false   # don't auto insert globals
+        detectGlobals: true    # only insert if a global is referenced
+      }
+
       # Create a bundle function that gets called whenever a file is updated.
       # We put it in a separate function because we also need to call the
       # bundle once manually and separately from the callback. If we don't
       # do this, then watchify doesn't keep the process open (i.e. it
       # immediately exits)
       bundle = ->
-        watchify.bundle {
-          debug: options.debug
-          detectGlobals: options.detectGlobals
-          insertGlobalse: options.insertGlobals
-        }, (err, src) ->
+        watchify.bundle bundleOptions, (err, src) ->
           if err
             grunt.log.error err
           else
             fs.writeFile destPath, src, (err) ->
-              console.log "browserifying done."
+              if err
+                grunt.log.error err
+              else
+                console.log "browserifying done."
 
 
       # watchify.on "file", (file, id, parent) ->
       #   console.log "on file:", id
 
-      # watch for file changes. When there is one, then we call bundle()
-      watchify.on "update", (id) ->
-        console.log "browserifying #{id.join(', ')}"
-        bundle()
-
       console.log "-------------------"
       console.log "grunt-browserifying"
       console.log "-------------------"
-      console.log "Watching #{sourcePaths}"
+
+      # watch for file changes. When there is one, then we call bundle()
+      if options.watch
+        watchify.on "update", (id) ->
+          console.log "browserifying #{id.join(', ')}"
+          bundle()
+        console.log "Watching #{sourcePaths}"
+      else
+        console.log "Not watching. To watch, add option {watch: true} to Gruntfile."
+
+      console.log "browserifying #{sourcePaths.join(', ')}"
       bundle()
