@@ -1,23 +1,23 @@
 {
-  "name": "grunt-browserify-plus",
+  "name": "grunt-browserifying",
   "description": "The ultimate Grunt Browserify task. Watches files for changes. Uses a cache for super speed (instant builds). CoffeeScript supported out of box. Alias mappings. Shimming. Everything in one easy to use package.",
   "version": "0.1.1",
-  "homepage": "https://github.com/thesunny/grunt-browserify-plus",
+  "homepage": "https://github.com/thesunny/grunt-browserifying",
   "author": {
     "name": "Sunny Hirai",
     "email": "thesunny@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/thesunny/grunt-browserify-plus.git"
+    "url": "git://github.com/thesunny/grunt-browserifying.git"
   },
   "bugs": {
-    "url": "https://github.com/thesunny/grunt-browserify-plus/issues"
+    "url": "https://github.com/thesunny/grunt-browserifying/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/thesunny/grunt-browserify-plus/blob/master/LICENSE-MIT"
+      "url": "https://github.com/thesunny/grunt-browserifying/blob/master/LICENSE-MIT"
     }
   ],
   "main": "grunt.js",
@@ -46,6 +46,6 @@
     "grunt": "~0.4.2"
   },
   "keywords": [
-    "gruntplugin", "browserify", "watchify", "coffeeify", "brfs", "aliasify", "browserify-shim"
+    "browserifying", "gruntplugin", "browserify", "watchify", "coffeeify", "brfs", "aliasify", "browserify-shim"
   ]
 }

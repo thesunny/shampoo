@@ -1,6 +1,6 @@
 /*
- * grunt-browserify-plus
- * https://github.com/thesunny/grunt-browserify-plus
+ * grunt-browserifying
+ * https://github.com/thesunny/grunt-browserifying
  *
  * Copyright (c) 2014 Sunny Hirai
  * Licensed under the MIT license.
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     },
 
     // Configuration to be run (and then tested).
-    browserify_plus: {
+    browserifying: {
       test: {
         options: {
           alias: {
@@ -72,7 +72,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'browserify_plus', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'browserifying', 'nodeunit']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
