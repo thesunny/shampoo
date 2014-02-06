@@ -62,9 +62,9 @@ module.exports = (grunt) ->
         resolveShimOptions(shimOptions)
         shim(watchify, shimOptions)
 
-      # Add aliasMappings using aliasify plugin
+      # Add alias support using aliasify plugin
       aliasify = require("aliasify").configure
-        aliases: options.aliasMappings
+        aliases: options.alias
       watchify.transform(aliasify)
 
       if options.brfs

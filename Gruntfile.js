@@ -32,7 +32,7 @@ module.exports = function(grunt) {
     browserify_plus: {
       test: {
         options: {
-          aliasMappings: {
+          alias: {
             'aliasMap-1': './example/aliasMappings/aliasMap-1',
             'aliasMap-2': './example/aliasMappings/aliasMap-2',
           },

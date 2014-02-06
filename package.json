@@ -1,7 +1,7 @@
 {
   "name": "grunt-browserify-plus",
   "description": "The ultimate Grunt Browserify task. Watches files for changes. Uses a cache for super speed (instant builds). CoffeeScript supported out of box. Alias mappings. Shimming. Everything in one easy to use package.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/thesunny/grunt-browserify-plus",
   "author": {
     "name": "Sunny Hirai",
@@ -20,6 +20,7 @@
       "url": "https://github.com/thesunny/grunt-browserify-plus/blob/master/LICENSE-MIT"
     }
   ],
+  "main": "grunt.js",
   "engines": {
     "node": ">= 0.8.0"
   },
