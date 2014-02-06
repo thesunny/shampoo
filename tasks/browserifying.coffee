@@ -1,4 +1,3 @@
-#
 # * grunt-browserifying
 # * https://github.com/thesunny/grunt-browserifying
 # *
@@ -44,18 +43,21 @@ module.exports = (grunt) ->
         extensions: [".coffee"]
       }
 
-      # Create a watchify instance that accepts both .js and .coffee files
+      # Create a watchify instance that accepts both .js and .coffee files.
+      # Watchify returns a Browserify instance except that it caches making
+      # Browserify run a lot faster after the first bundle.
       watchify = watchifyModule(watchifyOptions)
 
-      # Add all the source paths
+      # Add all the source paths the .files configuration.
       _.each sourcePaths, (sourcePath) ->
         watchify.add sourcePath
 
-      # Add the CoffeeScript transform
+      # Add the CoffeeScript transform. The CoffeeScript transform is added
+      # first so that the other transforms are working on top of JavaScript
+      # code instead of CoffeeScript code.
       watchify.transform(coffeeify)
 
-      # Add browserify-shim
-      # NOTE: This must be done after the CoffeeScript transform
+      # Add browserify-shim only if options.shim is defined.
       if options.shim?
         shim = require 'browserify-shim'
         shimOptions = resolveShimOptions(options.shim)
@@ -67,10 +69,15 @@ module.exports = (grunt) ->
         aliases: options.alias
       watchify.transform(aliasify)
 
+      # Add BRFS support if requested
       if options.brfs
         watchify.transform('brfs')
 
-      # Create a bundle function that gets called whenever a file is updated
+      # Create a bundle function that gets called whenever a file is updated.
+      # We put it in a separate function because we also need to call the
+      # bundle once manually and separately from the callback. If we don't
+      # do this, then watchify doesn't keep the process open (i.e. it
+      # immediately exits)
       bundle = ->
         watchify.bundle {
           debug: options.debug
@@ -97,102 +104,3 @@ module.exports = (grunt) ->
       console.log "-------------------"
       console.log "Watching #{sourcePaths}"
       bundle()
-
-      # if (opts.shim) {
-      #   shims = opts.shim;
-      #   var noParseShimExists = false;
-      #   var shimPaths = Object.keys(shims)
-      #     .map(function (alias) {
-      #       var shimPath = path.resolve(shims[alias].path);
-      #       shims[alias].path = shimPath;
-      #       if (!noParseShimExists) {
-      #         noParseShimExists = ctorOpts.noParse && ctorOpts.noParse.indexOf(shimPath) > -1;
-      #       }
-      #       return shimPath;
-      #     });
-      #   b = shim(b, shims);
-      #   if (noParseShimExists) {
-      #     var shimmed = [];
-      #     b.transform(function (file) {
-      #       if (shimmed.indexOf(file) < 0 &&
-      #           ctorOpts.noParse.indexOf(file) > -1 &&
-      #           shimPaths.indexOf(file) > -1) {
-      #         shimmed.push(file);
-      #         var data = 'var global=self;';
-      #         var write = function (buffer) {
-      #           return data += buffer;
-      #         };
-      #         var end = function () {
-      #           this.queue(data);
-      #           this.queue(null);
-      #         };
-      #         return through(write, end);
-      #       }
-      #       return through();
-      #     });
-      #   }
-      # }
-
-
-
-  #   # Iterate over all specified file groups.
-  #   @files.forEach (f) ->
-      
-  #     # Concat specified files.
-      
-  #     # Warn on and remove invalid source files (if nonull was set).
-      
-  #     # Read file source.
-  #     src = f.src.filter((filepath) ->
-  #       unless grunt.file.exists(filepath)
-  #         grunt.log.warn "Source file \"" + filepath + "\" not found."
-  #         false
-  #       else
-  #         true
-  #     ).map((filepath) ->
-  #       grunt.file.read filepath
-  #     ).join(grunt.util.normalizelf(options.separator))
-      
-  #     # Handle options.
-  #     src += options.punctuation
-      
-  #     # Write the destination file.
-  #     grunt.file.write f.dest, src
-      
-  #     # Print a success message.
-  #     grunt.log.writeln "File \"" + f.dest + "\" created."
-  #     return
-
-  #   return
-
-  # return
-
-#   fs = require 'fs'
-# watchify = require 'watchify'
-# coffeeify = require 'coffeeify'
-
-# # We are using watchify but I named it browserify because the object behaves
-# # just like browserify (except with caching) and the documentation for how
-# # to use it is all from browserify.
-# browserify = watchify({
-#   extensions: [".js", ".coffee"]
-# })
-# browserify.add "./coffeescripts/snapeditor.coffee"
-# browserify.transform coffeeify
-
-# bundle = ->
-#   browserify.bundle {
-#     debug: true
-#     detectGlobals: false
-#     insertGlobalse: false
-#   }, (err, src) ->
-#     fs.writeFile "./build-target/snapeditor.js", src, (err) ->
-#     console.log "done."  
-
-# browserify.on "update", (id) ->
-#   console.log "bundling #{id.join(', ')}"
-#   bundle()
-
-# console.log "start watchify"
-# console.log "initial bundle"
-# bundle()
