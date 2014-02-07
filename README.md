@@ -301,27 +301,47 @@ text = fs.readFileSync(__dirname + '/file.txt')
 ```
 
 
-#### Future TODO
+## Roadmap
 
 Here's some features I'd like to add.
 
-  * Make it work with gulp
-  * Make it work from the command line
-  * Unit test everything
+  * **gulp:** Make it work with gulp
+  * **command line:** Make it work from the command line
+  * **unit tests:** Unit test everything
+  * **dev and production modes:** Create sensible defaults for a 'production' mode and a 'development' mode. For example, debug mode should have sourceMaps: true and watching for changes: true while development mode should have no sourceMaps and only do the build one.
+  * **minification and obfuscation:** Add minification and obfuscation options with good defaults
 
 
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
+
+* **CoffeeScript:** Browserifying is written in CoffeeScript.
+
+* **Comments:** Please write a lot of comments. Since there are a lot of modules that get included (being that the purpose of Browserifying is to bring important modules together), it's important to comment everything that is going on in the code.
+
+* **Descriptive Variable Names:** Use long descriptive variable names rather than short ones so that it's easy for anybody to look at the source code and understand what's going on.
+
+We accept and encourage commits.
+
 
 ## Release History
-_(Nothing yet)_
+
+February 2, 2014
+* Added a `.watch` option so the same Grunt task can be used to do a single build (e.g. for production) or watching and continuously building (e.g. for development)
+* Merged `.aliasMappings` and `.shim` options into a single `.map` option. Easier to remember the name and its easier to convert an alias into a shim because you don't have to move the configuration options.
+* Added `brfs` support.
+* Renamed `.debug` option to `.sourceMaps` to be more intuitive.
+* Renamed library from `grunt-browserify-plus` to `grunt-browserifying`
+
 
 
 ## Thanks To
 
-Browserifying works by including the most popular Browserify modules and tools and configures them so that they all work together:
+Browserifying works by including the most popular Browserify modules and tools and configures them so that they all work together.
 
+Browserifying is really just a manager over a lot of important work contributed to the following projects:
+
+  * Browserify
   * Coffeeify
   * Watchify
   * Aliasify
