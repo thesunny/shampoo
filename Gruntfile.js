@@ -44,16 +44,6 @@ module.exports = function(grunt) {
               exports: '$'
             }
           },
-          // shim: {
-          //   'shim-1': {
-          //     path: './example/shims/shim-1',
-          //     exports: '$'
-          //   },
-          //   'shim-2': {
-          //     path: './example/shims/shim-2',
-          //     exports: '$'
-          //   }
-          // },
           brfs: true,
           watch: true
         },

@@ -57,9 +57,9 @@ module.exports = (grunt) ->
       # Note that Watchify returns a Browserify instance except that it caches
       # making Browserify run a lot faster after the first bundle.
       if options.watch
-        watchify = (require 'watchify')(browserifyOptions)
+        browserify = (require 'watchify')(browserifyOptions)
       else
-        watchify = (require 'browserify')(browserifyOptions)
+        browserify = (require 'browserify')(browserifyOptions)
 
       # # Create a watchify instance that accepts both .js and .coffee files.
       # # Watchify returns a Browserify instance except that it caches making
@@ -68,12 +68,12 @@ module.exports = (grunt) ->
 
       # Add all the source paths the .files configuration.
       _.each sourcePaths, (sourcePath) ->
-        watchify.add sourcePath
+        browserify.add sourcePath
 
       # Add the CoffeeScript transform. The CoffeeScript transform is added
       # first so that the other transforms are working on top of JavaScript
       # code instead of CoffeeScript code.
-      watchify.transform(coffeeify)
+      browserify.transform(coffeeify)
 
       maps = processMap(options.map)
       aliasMap = maps.aliasMap
@@ -84,17 +84,17 @@ module.exports = (grunt) ->
         shim = require 'browserify-shim'
         shimOptions = resolveShimOptions(shimMap)
         resolveShimOptions(shimOptions)
-        shim(watchify, shimOptions)
+        shim(browserify, shimOptions)
 
       # Add alias support using aliasify plugin if there are any alias maps
       if !_.isEmpty(aliasMap)
         aliasify = require("aliasify").configure
           aliases: aliasMap
-        watchify.transform(aliasify)
+        browserify.transform(aliasify)
 
       # Add BRFS support if requested
       if options.brfs
-        watchify.transform('brfs')
+        browserify.transform('brfs')
 
       bundleOptions = {
         # The default is to include the source maps
@@ -110,7 +110,7 @@ module.exports = (grunt) ->
       # do this, then watchify doesn't keep the process open (i.e. it
       # immediately exits)
       bundle = ->
-        watchify.bundle bundleOptions, (err, src) ->
+        browserify.bundle bundleOptions, (err, src) ->
           if err
             grunt.log.error err
           else
@@ -124,18 +124,22 @@ module.exports = (grunt) ->
       # watchify.on "file", (file, id, parent) ->
       #   console.log "on file:", id
 
+      # Let the world know that we have started.
       console.log "-------------------"
       console.log "grunt-browserifying"
       console.log "-------------------"
 
       # watch for file changes. When there is one, then we call bundle()
       if options.watch
-        watchify.on "update", (id) ->
+        browserify.on "update", (id) ->
           console.log "browserifying #{id.join(', ')}"
           bundle()
         console.log "Watching #{sourcePaths}"
       else
         console.log "Not watching. To watch, add option {watch: true} to Gruntfile."
 
+      # Sometimes the bundle will be working against watchify (i.e. the process
+      # will keep looking for file changes forever). Even when we are using
+      # watchify, we still want to run the bundle at the very beginning.
       console.log "browserifying #{sourcePaths.join(', ')}"
       bundle()
