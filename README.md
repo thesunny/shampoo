@@ -2,23 +2,39 @@
 
 The ultimate Grunt Browserify task.
 
-Waits for file changes and automatically builds using Browserify.
-
+  * Run once or watch files for changes
   * Uses a cache for super speed (instant builds)
-  * CoffeeScript support out of box
+  * CoffeeScript support built in
   * Alias mappings
-  * Shimming
-  * Inlining external files
+  * Shim non CommonJS files
+  * Super simple configuration and good defaults
+  * More...
 
-## Includes Popular Browserify Modules
 
-Grunt Browserify Plus works by including the most popular Browserify modules and tools and configures them so that they all work together:
+## Quick Start
+If you already know Grunt, for basic usage create a `Gruntfile.js` as below filling in your destination path and source path.
 
-  * Coffeeify
-  * Watchify
-  * Aliasify
-  * Browserify-Shim
-  * BRFS
+```
+// Gruntfile.js
+module.exports = function(grunt) {
+  grunt.initConfig({
+    browserifying: {
+      files: {
+        './build/dest/path.js': './source/path.js'
+      },
+    },
+  });
+  grunt.loadNpmTasks('grunt-browserifying');
+}
+```
+
+Then from your console:
+```
+grunt browserifying
+```
+
+This will start the task and watch the source file and all of its require'd dependencies for changes. It will rebuild when a file change is detected. It uses caching so its very fast. To quit watching, use `CTRL-C`.
+
 
 
 ## Getting Started
@@ -55,9 +71,14 @@ Optionally include an `options` Object. See the Options section for more info.
 
 ```js
 grunt.initConfig({
-  browserify_plus: {
+  browserifying: {
     options: {
-      // Options go here. See below for options.
+      // See the options sections for all options.
+
+      // popular option watches for file changes and updates only the changed
+      // files. If watch is missing or set to false, browserifying will only
+      // bundle the files once and exit.
+      watch: true 
     },
     files: {
       './build/path/example.js': './source/path.js'
@@ -77,11 +98,11 @@ grunt browserify_plus
 
 #### CoffeeScript
 
-As mentioned, it works with CoffeeScript files (no configuration required):
+It works with CoffeeScript files (no configuration required):
 
 ```js
 grunt.initConfig({
-  browserify_plus: {
+  browserifying: {
     options: {},
     files: {
       './build/path/example.js': './source/path.coffee'
@@ -98,7 +119,7 @@ For multiple files, pass in an array (feel free to mix js and coffee files):
 
 ```js
 grunt.initConfig({
-  browserify_plus: {
+  browserifying: {
     options: {},
     files: {
       './build/path/example.js': ['./source/path.coffee', './source/path_2.js']
@@ -115,7 +136,7 @@ You can have multiple builds going on simultaneously:
 
 ```js
 grunt.initConfig({
-  browserify_plus: {
+  browserifying: {
     options: {
     },
     files: {
@@ -136,19 +157,18 @@ All options:
 
 ```js
 grunt.initConfig({
-  browserify_plus: {
+  browserifying: {
     options: {
-      watch: true, // watch files for changes. caches so it's super fast.
-      alias: {
-        'underscore': './lib/underscore.js'
-      },
-      shim: {
+      watch: false, // watch files for changes with caching (default true)
+      map: {
+        'underscore': './lib/underscore.js',
         'jquery': {
           exports: '$',
           path: './lib/jquery.js',
         }
       },
-      sourceMaps: true,     // enable source maps
+      sourceMaps: true,     // enable source maps (default true)
+      brfs: true            // enable inlining files (default false)
     }
     },
     files: {
@@ -159,17 +179,36 @@ grunt.initConfig({
 ```
 
 
-#### options.alias
-Type: `Object`
-Default value: `null`
+#### options.map
 
-An Object that maps require names to file locations.
+Type: `Object`
+Default value: `{}`
+
+A map allows you to:
+
+* alias: Require files from any location using an alias
+* shim: Use a non-CommonJS JavaScript file with `require`
+
+##### options.map - alias
+
+```js
+// a map allows you to do this
+require 'underscore'
+```
+
+Instead of this
+```js
+// don't do this anymore
+require '../node_modules/underscore/underscore.js'
+```
+
+Configure maps like this:
 
 ```js
 grunt.initConfig({
-  browserify_plus: {
+  browserifying: {
     options: {
-      alias: {
+      map: {
         'underscore': './lib/underscore.js'
       }
     },
@@ -180,31 +219,37 @@ grunt.initConfig({
 });
 ```
 
-The root directory for the destination (i.e. './lib/underscore.js') is the directory where grunt is being run from.
+##### options.map - shim
 
+You can also use a shim inside the map.
 
-#### options.shim
-Type: `Object`
-Default value: `null`
+A shim allows you to use JavaScript files that are not designed for use with CommonJS.
 
-A shim exports a variable set within the JavaScript of that file. For example, underscore sets a "_" variable which we can then export. The same could be done for jQuery.
+In a CommonJS file, we export a variable by assigning it to `module.exports` like this:
 
-Note that shim also does aliasing as in `options.alias` above.
+```js
+// code goes here
+module.exports = someVariable;
+```
+
+JavaScript files that don't conform to CommonJS, don't have a `module.exports` assignment. Normally we would have to modify the JavaScript file just to add `module.exports` to make it work with Browserify.
+
+Instead, we can use a shim. We just tell that shim what variable to export. In the example above, that variable would be `someVariable`. For jQuery, it would be `$` or `jQuery` (both reference the same object).
+
+Here is how to use map to create a shim:
 
 ```js
 grunt.initConfig({
-  browserify_plus: {
+  browserifying: {
     options: {
-      shim: {
-        'underscore': {
-          exports: '_',
-          path: './lib/underscore.js'
-        },
+      map: {
+        // jQuery with a shim
         'jquery': {
           exports: '$',
           path: './lib/jquery.js'
-        }
-      }
+        },
+        // we can mix unshimmed maps in as well like below
+        'underscore': './lib/underscore.js'
       }
     },
     files: {
@@ -214,19 +259,41 @@ grunt.initConfig({
 });
 ```
 
+Now we can do:
 
-#### options.debug
+```js
+// this works now
+$ = require('jquery');
+```
+
+
+#### options.sourceMaps
 Type: `Boolean`
-Default value: `false`
+Default value: `true`
 
-When set to `true`, the output will include source maps. This means that when an error is thrown in any browser that supports source maps (e.g. Chrome or Firefox), you will see the original location where the error came from.
+When set to `true`, the output will include source maps. This means that when you are running the JavaScript code and there is an error you will see the error coming from the original file (not the bundle one). Your browser must support source maps (e.g. Chrome, Firefox, Safari).
+
+```js
+grunt.initConfig({
+  browserifying: {
+    options: {
+      sourceMaps: false    // disable source maps
+    },
+    files: {
+      ...
+    },
+  },
+});
+```
 
 
 #### options.brfs
 Type: `Boolean`
 Default value: `false`
 
-When set to `true`, calls to `fs.readFileSync(__dirname+'/file.txt')` will have the contents of the file inlined into the JavaScript. To make it all work, you should include the `require 'fs'` in the JavaScript or CoffeeScript file.
+When set to `true`, calls to code like `fs.readFileSync(__dirname + '/file.txt')` will have the contents of the file inlined into the JavaScript.
+
+Remember to include `require 'fs'` in the JavaScript or CoffeeScript file.
 
 ```js
 fs = require 'fs'
@@ -238,7 +305,9 @@ text = fs.readFileSync(__dirname + '/file.txt')
 
 Here's some features I'd like to add.
 
-  * Merge `options.shim` into `options.alias`: This will simplify creating aliases and shims. Consider the workflow where you start by using an alias and then notice that it requires a shim. You now have to move declaration into the shim section. By merging the two, this will no longer be required.
+  * Make it work with gulp
+  * Make it work from the command line
+  * Unit test everything
 
 
 
@@ -247,3 +316,14 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 _(Nothing yet)_
+
+
+## Thanks To
+
+Browserifying works by including the most popular Browserify modules and tools and configures them so that they all work together:
+
+  * Coffeeify
+  * Watchify
+  * Aliasify
+  * Browserify-Shim
+  * BRFS

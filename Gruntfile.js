@@ -32,11 +32,9 @@ module.exports = function(grunt) {
     browserifying: {
       test: {
         options: {
-          alias: {
+          map: {
             'aliasMap-1': './example/aliasMappings/aliasMap-1',
             'aliasMap-2': './example/aliasMappings/aliasMap-2',
-          },
-          shim: {
             'shim-1': {
               path: './example/shims/shim-1',
               exports: '$'
@@ -46,6 +44,16 @@ module.exports = function(grunt) {
               exports: '$'
             }
           },
+          // shim: {
+          //   'shim-1': {
+          //     path: './example/shims/shim-1',
+          //     exports: '$'
+          //   },
+          //   'shim-2': {
+          //     path: './example/shims/shim-2',
+          //     exports: '$'
+          //   }
+          // },
           brfs: true,
           watch: true
         },

@@ -16,6 +16,16 @@ resolveShimOptions = (options) ->
     value.path = path.resolve(value.path)
 
 
+processMap = (map) ->
+  aliasMap = {}
+  shimMap = {}
+  _.each map, (value, key) ->
+    if _.isString(value)
+      aliasMap[key] = value
+    else
+      shimMap[key] = value
+  {aliasMap: aliasMap, shimMap: shimMap}
+
 module.exports = (grunt) ->
   
   # Please see the Grunt documentation for more information regarding task
@@ -28,7 +38,7 @@ module.exports = (grunt) ->
 
     # get options with defaults
     options = @options(
-      watch: false
+      watch: true
       debug: false
       brfs: false
       aliasMappings: null
@@ -65,17 +75,22 @@ module.exports = (grunt) ->
       # code instead of CoffeeScript code.
       watchify.transform(coffeeify)
 
-      # Add browserify-shim only if options.shim is defined.
-      if options.shim?
+      maps = processMap(options.map)
+      aliasMap = maps.aliasMap
+      shimMap = maps.shimMap
+
+      # Add browserify-shim only if there are any shim maps
+      if !_.isEmpty(shimMap)
         shim = require 'browserify-shim'
-        shimOptions = resolveShimOptions(options.shim)
+        shimOptions = resolveShimOptions(shimMap)
         resolveShimOptions(shimOptions)
         shim(watchify, shimOptions)
 
-      # Add alias support using aliasify plugin
-      aliasify = require("aliasify").configure
-        aliases: options.alias
-      watchify.transform(aliasify)
+      # Add alias support using aliasify plugin if there are any alias maps
+      if !_.isEmpty(aliasMap)
+        aliasify = require("aliasify").configure
+          aliases: aliasMap
+        watchify.transform(aliasify)
 
       # Add BRFS support if requested
       if options.brfs
