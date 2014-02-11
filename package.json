@@ -22,7 +22,7 @@
   ],
   "main": "grunt.js",
   "bin": {
-    "browserifying": "./bin/browserifying"
+    "browserifying": "./bin/browserifying.js"
   },
   "engines": {
     "node": ">= 0.8.0"
