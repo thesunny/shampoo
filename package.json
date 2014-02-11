@@ -37,7 +37,8 @@
     "aliasify": "~1.4.0",
     "browserify": "~3.24.11",
     "browserify-shim": "~2.0.10",
-    "brfs": "0.0.9"
+    "brfs": "0.0.9",
+    "coffee-script": "~1.7.1"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.0",
@@ -49,6 +50,14 @@
     "grunt": "~0.4.2"
   },
   "keywords": [
-    "grunt", "browserify", "watchify", "gruntplugin", "coffeeify", "brfs", "aliasify", "browserify-shim", "browserifying"
+    "grunt",
+    "browserify",
+    "watchify",
+    "gruntplugin",
+    "coffeeify",
+    "brfs",
+    "aliasify",
+    "browserify-shim",
+    "browserifying"
   ]
 }
