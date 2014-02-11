@@ -21,6 +21,9 @@
     }
   ],
   "main": "grunt.js",
+  "bin": {
+    "browserifying": "./bin/browserifying"
+  },
   "engines": {
     "node": ">= 0.8.0"
   },
