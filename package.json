@@ -1,7 +1,7 @@
 {
   "name": "grunt-browserifying",
   "description": "The ultimate Grunt Browserify task. Run once or watch files for changes. Uses a cache for super speed (instant builds). CoffeeScript support built in. Alias mappings. Shimming. Everything in one easy to use package.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "homepage": "https://github.com/thesunny/grunt-browserifying",
   "author": {
     "name": "Sunny Hirai",
