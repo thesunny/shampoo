@@ -50,6 +50,11 @@ module.exports = function(grunt) {
         files: {
           './tmp/example.js': ['./example/example-1.coffee', './example/example-2.js']
         }
+      },
+      glob: {
+        files: {
+          './tmp/glob.js': ['./example/glob/**/*.coffee']
+        }
       }
     },
 
