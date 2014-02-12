@@ -39,13 +39,15 @@
     "browserify-shim": "~2.0.10",
     "brfs": "0.0.9",
     "coffee-script": "~1.7.1",
-    "glob": "~3.2.8"
+    "glob": "~3.2.8",
+    "mkdirp": "~0.3.5"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.0",
     "grunt-contrib-clean": "~0.4.0",
     "grunt-contrib-nodeunit": "~0.2.0",
-    "grunt": "~0.4.2"
+    "grunt": "~0.4.2",
+    "lodash": "~2.4.1"
   },
   "peerDependencies": {
     "grunt": "~0.4.2"

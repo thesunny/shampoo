@@ -51,7 +51,18 @@ module.exports = function(grunt) {
           './tmp/example.js': ['./example/example-1.coffee', './example/example-2.js']
         }
       },
+      simple: {
+        options: {
+          watch: false
+        },
+        files: {
+          './tmp/simple.js': ['./example/simple/alpha']
+        }
+      },
       glob: {
+        options: {
+          watch: false,
+        },
         files: {
           './tmp/glob.js': ['./example/glob/**/*.coffee']
         }
@@ -75,7 +86,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'browserifying', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'browserifying:glob', 'nodeunit']); // 'browserifying:simple', 
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

@@ -6,6 +6,7 @@
 # 
 "use strict"
 
+mkdirp = require 'mkdirp'
 fs = require 'fs'
 path = require 'path'
 coffeeify = require 'coffeeify'
@@ -46,9 +47,15 @@ module.exports = (grunt) ->
       shim: null
     )
 
+    numBundles = @files.length
+    completedBundles = 0
+
     @files.forEach (file) ->
       sourcePaths = file.orig.src
       destPath = file.orig.dest
+
+      # Create the destination directory
+      mkdirp.sync path.dirname(destPath)
 
       browserifyOptions = {
         extensions: [".coffee"]
@@ -71,6 +78,10 @@ module.exports = (grunt) ->
       flattenedSourcePaths = []
       _.each sourcePaths, (sourcePath) ->
         expandedSourcePaths = glob.sync sourcePath
+        # if the glob doesn't expand, it will actually return an empty Array
+        # instead of the sourcePath. The code below fixes this.
+        if expandedSourcePaths.length == 0
+          expandedSourcePaths = [sourcePath]
         _.each expandedSourcePaths, (expandedSourcePath) ->
           flattenedSourcePaths.push expandedSourcePath
           browserify.add expandedSourcePath
@@ -109,22 +120,32 @@ module.exports = (grunt) ->
         detectGlobals: true    # only insert if a global is referenced
       }
 
+      if options.watch
+        completeBundle = ->
+      else
+        completeBundle = ->
+          completedBundles++
+          quit() if completedBundles == numBundles
+
+
       # Create a bundle function that gets called whenever a file is updated.
       # We put it in a separate function because we also need to call the
-      # bundle once manually and separately from the callback. If we don't
-      # do this, then watchify doesn't keep the process open (i.e. it
-      # immediately exits)
+      # bundle once manually and also separately from the callback. If we don't
+      # call it once immediately, then watchify doesn't keep the process open
+      # (i.e. it immediately exits instead of watching)
       bundle = ->
         browserify.bundle bundleOptions, (err, src) ->
           if err
             grunt.log.error err
+            completeBundle()
           else
             fs.writeFile destPath, src, (err) ->
               if err
                 grunt.log.error err
+                completeBundle()
               else
                 console.log "browserifying done."
-
+                completeBundle()
 
       # watchify.on "file", (file, id, parent) ->
       #   console.log "on file:", id
