@@ -10,6 +10,7 @@ fs = require 'fs'
 path = require 'path'
 coffeeify = require 'coffeeify'
 _ = require 'lodash'
+glob = require 'glob'
 
 resolveShimOptions = (options) ->
   _.each options, (value, key) ->
@@ -67,8 +68,12 @@ module.exports = (grunt) ->
       # watchify = watchifyModule(watchifyOptions)
 
       # Add all the source paths the .files configuration.
+      flattenedSourcePaths = []
       _.each sourcePaths, (sourcePath) ->
-        browserify.add sourcePath
+        expandedSourcePaths = glob.sync sourcePath
+        _.each expandedSourcePaths, (expandedSourcePath) ->
+          flattenedSourcePaths.push expandedSourcePath
+          browserify.add expandedSourcePath
 
       # Add the CoffeeScript transform. The CoffeeScript transform is added
       # first so that the other transforms are working on top of JavaScript
@@ -135,11 +140,14 @@ module.exports = (grunt) ->
           console.log "browserifying #{id.join(', ')}"
           bundle()
         console.log "Watching #{sourcePaths}"
+        console.log ""
       else
         console.log "Not watching. To watch, add option {watch: true} to Gruntfile."
 
       # Sometimes the bundle will be working against watchify (i.e. the process
       # will keep looking for file changes forever). Even when we are using
-      # watchify, we still want to run the bundle at the very beginning.
+      # watchify, we will still want to run the bundle at the very beginning.
       console.log "browserifying #{sourcePaths.join(', ')}"
+      _.each flattenedSourcePaths, (path) ->
+        console.log "- #{path}"
       bundle()

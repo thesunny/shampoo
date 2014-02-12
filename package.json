@@ -38,7 +38,8 @@
     "browserify": "~3.24.11",
     "browserify-shim": "~2.0.10",
     "brfs": "0.0.9",
-    "coffee-script": "~1.7.1"
+    "coffee-script": "~1.7.1",
+    "glob": "~3.2.8"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.0",
