@@ -78,7 +78,7 @@ class ShampooCLI
     grunt.initConfig(
       browserifying: ShampoofileOptions
     )
-    grunt.loadTasks 'tasks'
+    grunt.loadTasks path.join(__dirname, '../tasks'
     shampooConfig = grunt.config.get('browserifying')
     if shampooConfig[taskSubName]
       grunt.task.run "browserifying:#{taskSubName}"
