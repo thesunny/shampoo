@@ -38,6 +38,8 @@ class ShampooCLI
       @runFromShampoofile('default')
     else if names.length == 1
       @runFromShampoofile(names[0])
+    else
+      @runFromArguments(names...)
 
   copyTemplate: (filename, force) ->
     # fs = require 'fs'
@@ -78,16 +80,35 @@ class ShampooCLI
     grunt.initConfig(
       browserifying: ShampoofileOptions
     )
-    grunt.loadTasks path.join(__dirname, '../tasks'
     shampooConfig = grunt.config.get('browserifying')
     if shampooConfig[taskSubName]
-      grunt.task.run "browserifying:#{taskSubName}"
-      grunt.task.start()
+      @runTask("browserifying:#{taskSubName}")
     else
       @warn(
         "Could not find a key named '#{taskSubName}' in the Shampoofile at:",
         shampooPath
       )
+
+  runFromArguments: (buildPath) ->
+    sourcePaths = _.toArray(arguments)
+    # shift off the buildPath
+    sourcePaths.shift()
+    argvOptions = {
+      files: {}
+    }
+    argvOptions.files[buildPath] = sourcePaths
+    grunt.initConfig(
+      browserifying:
+        argv: argvOptions
+    )
+    @runTask("browserifying:argv")
+
+  runTask: (taskName) ->
+    grunt.loadTasks path.join(__dirname, '../tasks')
+    grunt.task.run taskName
+    grunt.task.start()
+
+
 
   warn: (msg) ->
     console.log ""
