@@ -9,6 +9,9 @@
 * [x] Get it working from the command line with filename arguments
 * [ ] Rename everything to Shampoo.js
 * [ ] Serve files
+* [ ] Support for user defined extensions like .jsx
+* [ ] Test the Command Line
+* [ ] Creates a sample project on --init*
 
 Later (before release):
 * [ ] Make sure everything works in Unix Land

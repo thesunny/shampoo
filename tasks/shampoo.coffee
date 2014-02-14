@@ -1,5 +1,5 @@
-# * grunt-browserifying
-# * https://github.com/thesunny/grunt-browserifying
+# * ShampooJS
+# * https://github.com/thesunny/shampoojs
 # *
 # * Copyright (c) 2014 Sunny Hirai
 # * Licensed under the MIT license.
@@ -30,12 +30,11 @@ processMap = (map) ->
   {aliasMap: aliasMap, shimMap: shimMap}
 
 
-
 module.exports = (grunt) ->
   
   # Please see the Grunt documentation for more information regarding task
   # creation: http://gruntjs.com/creating-tasks
-  grunt.registerMultiTask "browserifying", "The ultimate CommonJS build tool for development and production", ->
+  grunt.registerMultiTask "shampoo", "The ultimate CommonJS build tool for development and production", ->
 
     # Runs this in asynchronous mode. Sets up a function to call when we want
     # to exit.
@@ -48,6 +47,7 @@ module.exports = (grunt) ->
       brfs: false
       aliasMappings: null
       shim: null
+      extensions: []
     )
 
     numBundles = @files.length
@@ -60,6 +60,9 @@ module.exports = (grunt) ->
       # Create the destination directory
       mkdirp.sync path.dirname(destPath)
 
+      # Adds CoffeeScript file extension to the list of supported extensions
+      # automatically. ShampooJS has CoffeeScript support built in. Note that
+      # we still need to add the `coffeeify` module to make CoffeeScript work.
       browserifyOptions = {
         extensions: [".coffee"]
       }
@@ -95,6 +98,11 @@ module.exports = (grunt) ->
       # code instead of CoffeeScript code.
       browserify.transform(coffeeify)
 
+      # Process maps separates our single map configuration into two separate
+      # maps. One is an alias map which just maps a name to a path. The other
+      # is a shimMap which maps a name to a path and a variable that needs to
+      # be pulled out of it. The aliasMap is fed to `aliasify` and the
+      # shimMap is fed to `browserify-shim`.
       maps = processMap(options.map)
       aliasMap = maps.aliasMap
       shimMap = maps.shimMap
@@ -124,6 +132,11 @@ module.exports = (grunt) ->
         detectGlobals: true    # only insert if a global is referenced
       }
 
+      # If we are in watch mode, then we don't need to ever quit so the
+      # function just does nothing (noop). If we are not in watch mode, then
+      # we need to terminate once all the bundles are completed. The method
+      # then just counts the completed bundles and calls quit() when the
+      # number of completed bundles matches the total number of bundles.
       if options.watch
         completeBundle = ->
       else
@@ -148,31 +161,40 @@ module.exports = (grunt) ->
                 grunt.log.error err
                 completeBundle()
               else
-                console.log "browserifying done (#{destPath})."
+                console.log "  DONE: #{destPath}."
+                console.log ""
                 completeBundle()
 
-      # watchify.on "file", (file, id, parent) ->
-      #   console.log "on file:", id
-
       # Let the world know that we have started.
-      console.log "-------------------"
-      console.log "grunt-browserifying"
-      console.log "-------------------"
+      console.log ""
+      console.log "----------"
+      console.log "Shampoo JS"
+      console.log "----------"
 
       # watch for file changes. When there is one, then we call bundle()
       if options.watch
-        browserify.on "update", (id) ->
-          console.log "browserifying #{id.join(', ')}"
+        browserify.on "update", (ids) ->
+          console.log "Shampooing changes:" #  #{id.join(', ')}
+          _.each ids, (id) ->
+            relativePath = util.rootPath(util.normalizePathDelimiter(path.relative(process.cwd(), id)))
+            console.log "  FILE: #{relativePath}"
+          # console.log ""
           bundle()
-        console.log "Watching #{sourcePaths}"
+        console.log ""
+        console.log "Watching #{sourcePaths} and dependencies forever..."
+        console.log ""
+        console.log "  CTRL+C to quit."
         console.log ""
       else
-        console.log "Not watching. To watch, add option {watch: true} to Gruntfile."
+        console.log ""
+        console.log "Not watching. Running once."
+        console.log ""
 
       # Sometimes the bundle will be working against watchify (i.e. the process
       # will keep looking for file changes forever). Even when we are using
       # watchify, we will still want to run the bundle at the very beginning.
-      console.log "browserifying #{sourcePaths.join(', ')}"
+      console.log "Shampooing:" #  #{sourcePaths.join(', ')}
       _.each flattenedSourcePaths, (path) ->
-        console.log "- #{path}"
+        console.log "  FILE: #{path}"
+      # console.log ""
       bundle()

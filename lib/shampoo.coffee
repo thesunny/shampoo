@@ -89,11 +89,11 @@ class ShampooCLI
 
     # Setup Grunt to run the config
     grunt.initConfig(
-      browserifying: ShampoofileOptions
+      shampoo: ShampoofileOptions
     )
-    shampooConfig = grunt.config.get('browserifying')
+    shampooConfig = grunt.config.get('shampoo')
     if shampooConfig[taskSubName]
-      @runTask("browserifying:#{taskSubName}")
+      @runTask("shampoo:#{taskSubName}")
     else
       @warn(
         "Could not find a key named '#{taskSubName}' in the Shampoofile at:",
@@ -109,10 +109,10 @@ class ShampooCLI
     }
     argvOptions.files[buildPath] = sourcePaths
     grunt.initConfig(
-      browserifying:
+      shampoo:
         argv: argvOptions
     )
-    @runTask("browserifying:argv")
+    @runTask("shampoo:argv")
 
   # Loads the tasks defined for this project in ./tasks and then runs the
   # task with the given taskName

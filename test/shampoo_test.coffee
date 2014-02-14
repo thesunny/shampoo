@@ -84,10 +84,12 @@ exports.browserifying =
     console.log "============================"
     console.log "YOU MUST MANUALLY TEST WATCH"
     console.log "----------------------------"
-    console.log "> grunt browserifying:watch"
     console.log ""
-    console.log "make changes to file in watch ./example/watch"
-    console.log "make sure on every save file gets rebuilt"
+    console.log "Run the following from command line:"
+    console.log "> grunt shampoo:watch"
+    console.log ""
+    console.log "Then re-save any file in ./example/watch"
+    console.log "After each save, make sure ./tmp/watch.js is rebuilt"
     test.done()
 
   

@@ -1,13 +1,11 @@
 #
-# * grunt-browserifying
-# * https://github.com/thesunny/grunt-browserifying
+# * ShampooJS
+# * https://github.com/thesunny/shampoojs
 # *
 # * Copyright (c) 2014 Sunny Hirai
 # * Licensed under the MIT license.
 # 
 "use strict"
-
-require 'coffee-script/register'
 
 module.exports = (grunt) ->
   
@@ -36,7 +34,7 @@ module.exports = (grunt) ->
 
     
     # Configuration to be run (and then tested).
-    browserifying:
+    shampoo:
 
       alias:
         options:
@@ -132,14 +130,14 @@ module.exports = (grunt) ->
   # plugin's task(s), then test the result.
   grunt.registerTask "test", [
     "clean"
-    "browserifying:simple"
-    "browserifying:prefix"
-    "browserifying:extension"
-    "browserifying:alias"
-    "browserifying:shim"
-    "browserifying:coffee"
-    "browserifying:glob"
-    "browserifying:integrated"
+    "shampoo:simple"
+    "shampoo:prefix"
+    "shampoo:extension"
+    "shampoo:alias"
+    "shampoo:shim"
+    "shampoo:coffee"
+    "shampoo:glob"
+    "shampoo:integrated"
     "nodeunit"
   ]
   

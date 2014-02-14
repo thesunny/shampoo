@@ -1,23 +1,23 @@
 {
-  "name": "grunt-browserifying",
+  "name": "shampoo",
   "description": "The ultimate Grunt Browserify task. Run once or watch files for changes. Uses a cache for super speed (instant builds). CoffeeScript support built in. Alias mappings. Shimming. Everything in one easy to use package.",
   "version": "1.0.11",
-  "homepage": "https://github.com/thesunny/grunt-browserifying",
+  "homepage": "https://github.com/thesunny/shampoo-js",
   "author": {
     "name": "Sunny Hirai",
     "email": "thesunny@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/thesunny/grunt-browserifying.git"
+    "url": "git://github.com/thesunny/shampoo-js.git"
   },
   "bugs": {
-    "url": "https://github.com/thesunny/grunt-browserifying/issues"
+    "url": "https://github.com/thesunny/shampoo-js/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/thesunny/grunt-browserifying/blob/master/LICENSE-MIT"
+      "url": "https://github.com/thesunny/shampoo-js/blob/master/LICENSE-MIT"
     }
   ],
   "main": "grunt.js",

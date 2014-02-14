@@ -1,4 +1,4 @@
-# grunt-browserifying
+# Shampoo JS
 
 The ultimate Grunt Browserify task.
 

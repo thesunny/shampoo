@@ -1,6 +1,7 @@
 module.exports =
   homeRegexp: /^\.\//
   jsExtensionRegexp: /\.js$/
+  pathDelimiterRegexp: /\\/g
   prefix: (path) ->
     if path.match @homeRegexp
       path
@@ -11,3 +12,7 @@ module.exports =
       path
     else
       "#{path}.js"
+  normalizePathDelimiter: (path) ->
+    path.replace(@pathDelimiterRegexp, '/')
+  rootPath: (path) ->
+    "./#{path}"

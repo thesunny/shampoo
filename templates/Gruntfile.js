@@ -3,7 +3,7 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
-    browserifying: {
+    shampoo: {
       default: {
         options: {
           // map: {},
