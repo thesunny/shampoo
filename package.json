@@ -1,7 +1,7 @@
 {
   "name": "shampoo",
   "description": "The ultimate Grunt Browserify task. Run once or watch files for changes. Uses a cache for super speed (instant builds). CoffeeScript support built in. Alias mappings. Shimming. Everything in one easy to use package.",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "homepage": "https://github.com/thesunny/shampoo-js",
   "author": {
     "name": "Sunny Hirai",
