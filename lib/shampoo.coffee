@@ -1,3 +1,6 @@
+# Runs the Shampoofile using Grunt but without actually having to run Grunt
+# from the command line.
+
 grunt = require 'grunt'
 _ = require 'lodash'
 path = require 'path'
@@ -18,14 +21,20 @@ class ShampooCLI
     args.shift()
     args.shift()
     _.each args, (arg) =>
+      # If run with --init or --init-js then initialize for Javascript
       if arg == '--init' || arg == '--init-js'
         mode = "init"
         lang = "js"
+      # If run with --init-coffee then initialize for CoffeeScript
       else if arg == '--init-coffee'
         mode = 'init'
         lang = 'coffee'
+      # If run with --force, then allow initialization to overwrite existing
+      # Shampoofile
       else if arg == '--force'
         force = true
+      # For everything else, we just push the argument onto the list of names.
+      # The first name found is always the build destination.
       else
         names.push arg
 
@@ -39,6 +48,8 @@ class ShampooCLI
     else if names.length == 1
       @runFromShampoofile(names[0])
     else
+      console.log '782374893728947328947328974893'
+      console.log names
       @runFromArguments(names...)
 
   copyTemplate: (filename, force) ->
@@ -103,13 +114,14 @@ class ShampooCLI
     )
     @runTask("browserifying:argv")
 
+  # Loads the tasks defined for this project in ./tasks and then runs the
+  # task with the given taskName
   runTask: (taskName) ->
     grunt.loadTasks path.join(__dirname, '../tasks')
     grunt.task.run taskName
     grunt.task.start()
 
-
-
+  # Outputs a nicely formatted warning message to the console.
   warn: (msg) ->
     console.log ""
     console.log "=== WARNING ==="

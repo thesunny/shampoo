@@ -2,11 +2,14 @@
 
 grunt = require("grunt")
 
+# Add methods onto String without actually modifying the String object.
+# Here to aid in testing.
 class StringClass
   constructor: (@s) ->
   has: (subString) ->
     @s.indexOf(subString) != -1
 
+# Shortcut to create a new StringClass object
 S = (s) ->
   new StringClass(s)
 
@@ -35,6 +38,18 @@ exports.browserifying =
 
   simple: (test) ->
     s = S(grunt.file.read("tmp/simple.js"))
+    test.ok s.has('console.log("alpha");'), "includes alpha"
+    test.ok s.has('module.exports = "bravo";'), "includes bravo"
+    test.done()
+
+  prefix: (test) ->
+    s = S(grunt.file.read("tmp/prefix.js"))
+    test.ok s.has('console.log("alpha");'), "includes alpha"
+    test.ok s.has('module.exports = "bravo";'), "includes bravo"
+    test.done()
+
+  extension: (test) ->
+    s = S(grunt.file.read("tmp/extension.js"))
     test.ok s.has('console.log("alpha");'), "includes alpha"
     test.ok s.has('module.exports = "bravo";'), "includes bravo"
     test.done()

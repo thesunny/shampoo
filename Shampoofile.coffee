@@ -6,7 +6,7 @@ module.exports =
       watch: false
     }
     files:
-      "./tmp/alpha.js": "./example/simple/alpha"
+      "./tmp/build.js": "./example/simple/alpha"
 
   # Run when you call "shampoo custom". Make as many custom builds as you want.
   custom:

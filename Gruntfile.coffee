@@ -27,6 +27,13 @@ module.exports = (grunt) ->
     clean:
       tests: ["tmp"]
 
+    connect:
+      server:
+        options:
+          port: 9001
+          base: '.'
+          keepalive: true
+
     
     # Configuration to be run (and then tested).
     browserifying:
@@ -37,7 +44,7 @@ module.exports = (grunt) ->
           map:
             "alias": "./example/alias/alias.js"
         files:
-          "./tmp/alias.js": "./example/alias/index"
+          "./tmp/alias.js": "./example/alias/index.js"
 
       shim:
         options:
@@ -67,10 +74,8 @@ module.exports = (grunt) ->
             "shim-2":
               path: "./example/integrated/shims/shim-2"
               exports: "$"
-
           brfs: true
           watch: false
-
         files:
           "./tmp/integrated.js": [
             "./example/integrated/example-1.coffee"
@@ -83,6 +88,18 @@ module.exports = (grunt) ->
 
         files:
           "./tmp/simple.js": ["./example/simple/alpha"]
+
+      prefix:
+        options:
+          watch: false
+        files:
+          "tmp/prefix.js": "example/simple/alpha"
+
+      extension:
+        options:
+          watch: false
+        files:
+          "tmp/extension": "example/simple/alpha"
 
       glob:
         options:
@@ -109,12 +126,15 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-jshint"
   grunt.loadNpmTasks "grunt-contrib-clean"
   grunt.loadNpmTasks "grunt-contrib-nodeunit"
+  grunt.loadNpmTasks "grunt-contrib-connect"
   
   # Whenever the "test" task is run, first clean the "tmp" dir, then run this
   # plugin's task(s), then test the result.
   grunt.registerTask "test", [
     "clean"
     "browserifying:simple"
+    "browserifying:prefix"
+    "browserifying:extension"
     "browserifying:alias"
     "browserifying:shim"
     "browserifying:coffee"

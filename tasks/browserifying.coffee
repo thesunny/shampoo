@@ -12,6 +12,7 @@ path = require 'path'
 coffeeify = require 'coffeeify'
 _ = require 'lodash'
 glob = require 'glob'
+util = require '../lib/util'
 
 resolveShimOptions = (options) ->
   _.each options, (value, key) ->
@@ -28,11 +29,13 @@ processMap = (map) ->
       shimMap[key] = value
   {aliasMap: aliasMap, shimMap: shimMap}
 
+
+
 module.exports = (grunt) ->
   
   # Please see the Grunt documentation for more information regarding task
   # creation: http://gruntjs.com/creating-tasks
-  grunt.registerMultiTask "browserifying", "Continuously Browserify JavaScript and CoffeeScript files fast (it caches)", ->
+  grunt.registerMultiTask "browserifying", "The ultimate CommonJS build tool for development and production", ->
 
     # Runs this in asynchronous mode. Sets up a function to call when we want
     # to exit.
@@ -52,7 +55,7 @@ module.exports = (grunt) ->
 
     @files.forEach (file) ->
       sourcePaths = file.orig.src
-      destPath = file.orig.dest
+      destPath = util.normalizeBuildExtension(util.prefix(file.orig.dest))
 
       # Create the destination directory
       mkdirp.sync path.dirname(destPath)
@@ -81,8 +84,9 @@ module.exports = (grunt) ->
         # if the glob doesn't expand, it will actually return an empty Array
         # instead of the sourcePath. The code below fixes this.
         if expandedSourcePaths.length == 0
-          expandedSourcePaths = [sourcePath]
+          expandedSourcePaths = [util.prefix(sourcePath)]
         _.each expandedSourcePaths, (expandedSourcePath) ->
+          expandedSourcePath = util.prefix(expandedSourcePath)
           flattenedSourcePaths.push expandedSourcePath
           browserify.add expandedSourcePath
 
@@ -144,7 +148,7 @@ module.exports = (grunt) ->
                 grunt.log.error err
                 completeBundle()
               else
-                console.log "browserifying done."
+                console.log "browserifying done (#{destPath})."
                 completeBundle()
 
       # watchify.on "file", (file, id, parent) ->
