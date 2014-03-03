@@ -1,5 +1,17 @@
 # Shampoo JS
 
+Sorry, this documentation is a little out of date.
+
+I am working on a full website with documentation which is why the README is a little old. Wasn't expecting people to find this library so soon...
+
+The new version works:
+
+  * From the command line
+  * With a very simple Shampoofile.js or Shampoofile.coffee
+  * Continues to work as a Grunt task
+
+
+
 The ultimate Grunt Browserify task.
 
   * Run once or watch files for changes
@@ -18,7 +30,7 @@ If you already know Grunt, for basic usage create a `Gruntfile.js` as below fill
 // Gruntfile.js
 module.exports = function(grunt) {
   grunt.initConfig({
-    browserifying: {
+    shampoo: {
       files: {
         './build/dest/path.js': './source/path.js'
       },

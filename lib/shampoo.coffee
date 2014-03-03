@@ -1,56 +1,46 @@
 # Runs the Shampoofile using Grunt but without actually having to run Grunt
 # from the command line.
 
-grunt = require 'grunt'
-_ = require 'lodash'
-path = require 'path'
-
-argv = process.argv
+grunt    = require 'grunt'
+_        = require 'lodash'
+path     = require 'path'
+minimist = require 'minimist'
 
 class ShampooCLI
   constructor: (argv) ->
     @initArgs(_.clone(argv))
 
   initArgs: (args) ->
-    mode = null
-    lang = null
+    # don't need the first two arguments because that is 'node.js' and 'shampoo.js'
+    # and we convert the rest into a plain JavaScript object using minimist.
+    argv  = minimist(args.slice(2))
+    mode  = null
+    lang  = null
     force = null
+    watch = true
     names = []
-    # shift off the first two arguments because they are just running of this
-    # program and not the actual arguments
-    args.shift()
-    args.shift()
-    _.each args, (arg) =>
-      # If run with --init or --init-js then initialize for Javascript
-      if arg == '--init' || arg == '--init-js'
-        mode = "init"
-        lang = "js"
-      # If run with --init-coffee then initialize for CoffeeScript
-      else if arg == '--init-coffee'
-        mode = 'init'
-        lang = 'coffee'
-      # If run with --force, then allow initialization to overwrite existing
-      # Shampoofile
-      else if arg == '--force'
-        force = true
-      # For everything else, we just push the argument onto the list of names.
-      # The first name found is always the build destination.
-      else
-        names.push arg
 
-    if mode == 'init'
-      if lang == 'coffee'
-        @copyTemplate('Shampoofile.coffee', force)
-      else if lang == 'js'
-        @copyTemplate('Shampoofile.js', force)
-    else if names.length == 0
-      @runFromShampoofile('default')
-    else if names.length == 1
-      @runFromShampoofile(names[0])
+    options =
+      force: argv.force || false
+      initJavaScript: argv['init-js'] || argv['init'] || false
+      initCoffeeScript: argv['init-coffee'] || false
+      once: argv['once'] || argv['o'] || false
+      files: argv['_']
+      dest: argv['_'][0]
+      src: argv['_'].slice(1)
+
+    # only do one of these which is why we have a lot of if/else here
+    if options.initCoffeeScript
+      @copyTemplate 'Shampoofile.coffee', options.force
+    else if options.initJavaScript
+      @copyTemplate 'Shampoofile.js', options.force
+    else if options.files.length == 0
+      @runFromShampoofile 'default'
+    else if options.files.length == 1
+      @runFromShampoofile options.dest[0]
     else
-      console.log '782374893728947328947328974893'
-      console.log names
-      @runFromArguments(names...)
+      @runFromArguments(options.files, !options.once)
+
 
   copyTemplate: (filename, force) ->
     # fs = require 'fs'
@@ -100,13 +90,18 @@ class ShampooCLI
         shampooPath
       )
 
-  runFromArguments: (buildPath) ->
-    sourcePaths = _.toArray(arguments)
+  runFromArguments: (args, watch) ->
+    buildPath = args[0]
+    sourcePaths = _.toArray(args)
     # shift off the buildPath
     sourcePaths.shift()
     argvOptions = {
+      options: {}
       files: {}
     }
+    # TODO: Temporarily set this to false for testing. Once I get the tests
+    # in place and --once option working, then this should not be hard coded.
+    argvOptions.options.watch = watch
     argvOptions.files[buildPath] = sourcePaths
     grunt.initConfig(
       shampoo:

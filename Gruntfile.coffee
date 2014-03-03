@@ -99,6 +99,13 @@ module.exports = (grunt) ->
         files:
           "tmp/extension": "example/simple/alpha"
 
+      extensions:
+        options:
+          watch: false
+          extensions: ['.jsx']
+        files:
+          "tmp/extensions": "example/extensions/index"
+
       glob:
         options:
           watch: false
@@ -114,7 +121,8 @@ module.exports = (grunt) ->
     
     # Unit tests.
     nodeunit:
-      tests: ["test/*_test.coffee"]
+      grunt: ["test/*_test.coffee"]
+      command: ["test/shampoo_command_test.coffee"]
 
   
   # Actually load this plugin's task(s).
@@ -133,12 +141,19 @@ module.exports = (grunt) ->
     "shampoo:simple"
     "shampoo:prefix"
     "shampoo:extension"
+    "shampoo:extensions"
     "shampoo:alias"
     "shampoo:shim"
     "shampoo:coffee"
     "shampoo:glob"
     "shampoo:integrated"
-    "nodeunit"
+    "nodeunit:grunt"
+  ]
+
+  # This just runs the command line tests
+  grunt.registerTask "test-command", [
+    "clean",
+    "nodeunit:command"
   ]
   
   # By default, lint and run all tests.

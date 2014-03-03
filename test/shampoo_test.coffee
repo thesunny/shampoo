@@ -1,6 +1,7 @@
 "use strict"
 
 grunt = require("grunt")
+path = require("path")
 
 # Add methods onto String without actually modifying the String object.
 # Here to aid in testing.
@@ -31,7 +32,7 @@ S = (s) ->
 #    test.doesNotThrow(block, [error], [message])
 #    test.ifError(value)
 #
-exports.browserifying =
+exports.shampoo =
   setUp: (done) ->
     # setup here if necessary
     done()
@@ -52,6 +53,11 @@ exports.browserifying =
     s = S(grunt.file.read("tmp/extension.js"))
     test.ok s.has('console.log("alpha");'), "includes alpha"
     test.ok s.has('module.exports = "bravo";'), "includes bravo"
+    test.done()
+
+  extensions: (test) ->
+    s = S(grunt.file.read("tmp/extensions.js"))
+    test.ok s.has('console.log("index.jsx")'), "includes index.jsx"
     test.done()
 
   alias: (test) ->
@@ -81,15 +87,21 @@ exports.browserifying =
 
   watch: (test) ->
     console.log ""
+    console.log ""
     console.log "============================"
     console.log "YOU MUST MANUALLY TEST WATCH"
-    console.log "----------------------------"
+    console.log "============================"
+    console.log ""
+    console.log "Change to this directory from the command line:"
+    console.log "> cd #{path.normalize(__dirname + '/..')}"
     console.log ""
     console.log "Run the following from command line:"
     console.log "> grunt shampoo:watch"
     console.log ""
     console.log "Then re-save any file in ./example/watch"
+    console.log ""
     console.log "After each save, make sure ./tmp/watch.js is rebuilt"
+    console.log ""
     test.done()
 
   

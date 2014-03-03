@@ -63,8 +63,11 @@ module.exports = (grunt) ->
       # Adds CoffeeScript file extension to the list of supported extensions
       # automatically. ShampooJS has CoffeeScript support built in. Note that
       # we still need to add the `coffeeify` module to make CoffeeScript work.
+      #
+      # Also adds any user defined extensions onto the list of acceptable
+      # extensions.
       browserifyOptions = {
-        extensions: [".coffee"]
+        extensions: [".coffee"].concat(options.extensions)
       }
 
       # Create a browserify instance that accepts both .js and .coffee files.
